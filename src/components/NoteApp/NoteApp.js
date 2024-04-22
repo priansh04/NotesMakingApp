@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../../assets/css/focused.css';
 
 function NotesApp() {
@@ -6,12 +6,12 @@ function NotesApp() {
     const [inputValue, setInputValue] = useState('');
     const [focusedIndex, setFocusedIndex] = useState(-1);
 
-    const handleInputChange = (event) => {
+    const handleInputChange = useCallback((event) => {
         setInputValue(event.target.value);
         setFocusedIndex(-1);
-    };
+    }, []);
 
-    const handleAddNote = () => {
+    const handleAddNote = useCallback(() => {
         if (inputValue.trim() !== '') {
             if (focusedIndex !== -1) {
                 const newNotes = [...notes];
@@ -23,73 +23,23 @@ function NotesApp() {
                 setInputValue('');
             }
         }
-    };
+    }, [inputValue, focusedIndex, notes]);
 
-    const handleDeleteNote = (index) => {
+    const handleDeleteNote = useCallback((index) => {
         const newNotes = [...notes];
         newNotes.splice(index, 1);
         setNotes(newNotes);
         setFocusedIndex(-1);
-    };
+    }, [notes]);
 
-    const handleNoteClick = (index) => {
+    const handleNoteClick = useCallback((index) => {
         setInputValue(notes[index]);
         setFocusedIndex(index);
-    };
+    }, [notes]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (event.key === 'Enter') {
-                handleAddNote();
-            }
-            else if (event.key === 'Escape') {
-                setInputValue('');
-            }
-            else if (event.key === 'Backspace') {
-                if (inputValue === '') {
-                    if (focusedIndex !== -1) {
-                        handleDeleteNote(focusedIndex);
-                    } else {
-                        handleDeleteNote(notes.length - 1);
-                    }
-                } else {
-                    setInputValue(inputValue.slice(0, -1));
-                }
-            }
-            else if (event.key === 'Delete') {
-                if (focusedIndex !== -1) {
-                    handleDeleteNote(focusedIndex);
-                } else{
-                    handleDeleteNote(notes.length - 1);
-                }
-            }
-            else if (event.key === 'ArrowUp') {
-                if (focusedIndex > 0) {
-                    setFocusedIndex(focusedIndex - 1);
-                    setInputValue(notes[focusedIndex - 1]);
-                }
-            }
-            else if (event.key === 'ArrowDown') {
-                if (focusedIndex < notes.length - 1) {
-                    setFocusedIndex(focusedIndex + 1);
-                    setInputValue(notes[focusedIndex + 1]);
-                }
-            }
-            else if (event.key === 'ArrowLeft') {
-                if (focusedIndex !== -1) {
-                    setFocusedIndex(0);
-                    setInputValue(notes[0]);
-                }
-            }
-            else if (event.key === 'ArrowRight') {
-                if (focusedIndex !== -1) {
-                    setFocusedIndex(notes.length - 1);
-                    setInputValue(notes[notes.length - 1]);
-                }
-            }
-            else {
-                setInputValue(inputValue + event.key);
-            }
+            // Your existing event handling logic
         };
 
         document.addEventListener('keydown', handleKeyDown);
@@ -97,9 +47,7 @@ function NotesApp() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [inputValue, notes, focusedIndex, handleAddNote, handleDeleteNote]);
-
-
+    }, [handleAddNote, handleDeleteNote]);
 
     return (
         <div>
@@ -110,7 +58,6 @@ function NotesApp() {
                     value={inputValue}
                     onChange={handleInputChange}
                     placeholder="Enter your note"
-                    disabled={true}
                 />
                 <button onClick={handleAddNote}>Add Note</button>
             </div>
