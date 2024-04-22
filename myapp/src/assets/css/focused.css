@@ -1,0 +1,5 @@
+.focused{
+    border: 1px solid #000;
+    box-shadow: 0 0 10px #719ECE;
+    transition: box-shadow 0.5s;
+}
