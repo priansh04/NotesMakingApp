@@ -97,7 +97,7 @@ function NotesApp() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [inputValue, notes, focusedIndex]);
+    }, [inputValue, notes, focusedIndex, handleAddNote, handleDeleteNote]);
 
 
 
